@@ -6,15 +6,29 @@ from train_eval import train, init_network
 from importlib import import_module
 import argparse
 
-parser = argparse.ArgumentParser(description='News Text Classification')
-parser.add_argument('--model', type=str, required=True, help='choose a model: TextCNN, TextRNN, FastText, TextRCNN, TextRNN_Att, DPCNN, Transformer')
-parser.add_argument('--embedding', default='pre_trained', type=str, help='random or pre_trained')
-parser.add_argument('--word', default=False, type=bool, help='True for word, False for char')
-args = parser.parse_args()
+def parse():
+    parser = argparse.ArgumentParser(description='Text Classification')
+    parser.add_argument('--model', 
+                        type=str, 
+                        required=True, 
+                        help='choose a model: TextCNN, TextRNN, \
+                        FastText, TextRCNN, TextRNN_Att, DPCNN, Transformer')
+    parser.add_argument('--embedding', 
+                        default='pre_trained', 
+                        type=str, 
+                        help='random or pre_trained')
+    parser.add_argument('--word', 
+                        default=False, 
+                        type=bool, 
+                        help='True for word, False for char')
+    args = parser.parse_args()
+    return args
 
 
 if __name__ == '__main__':
     dataset = 'data'  # 数据集
+    # 获取命令行参数
+    args = parse()
     # 搜狗新闻:embedding_SougouNews.npz, 腾讯:embedding_Tencent.npz, 随机初始化:random
     #embedding = 'embedding_SougouNews.npz'
     embedding = 'embedding_Tencent.npz'
@@ -49,6 +63,8 @@ if __name__ == '__main__':
     config.n_vocab = len(vocab)
     model = x.Model(config).to(config.device)
     if model_name != 'Transformer':
-        init_network(model)
+        method = "kaiming"
+        # method = "xavier"
+        init_network(model, method=method)
     print(model.parameters)
     train(config, model, train_iter, dev_iter, test_iter)

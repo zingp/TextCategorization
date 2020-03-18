@@ -1,4 +1,8 @@
 # coding: UTF-8
+"""
+1 根据训练集构建词表
+2 根据词表与预训练词向量 构建预训练embeddings文件*.npz
+"""
 import os
 import torch
 import numpy as np
@@ -22,7 +26,8 @@ def build_vocab(file_path, tokenizer, max_size, min_freq):
             content = lin.split('\t')[0]
             for word in tokenizer(content):
                 vocab_dic[word] = vocab_dic.get(word, 0) + 1
-        vocab_list = sorted([_ for _ in vocab_dic.items() if _[1] >= min_freq], key=lambda x: x[1], reverse=True)[:max_size]
+        vocab_list = sorted([_ for _ in vocab_dic.items() if _[1] >= min_freq], 
+                            key=lambda x: x[1], reverse=True)[:max_size]
         vocab_dic = {word_count[0]: idx for idx, word_count in enumerate(vocab_list)}
         vocab_dic.update({UNK: len(vocab_dic), PAD: len(vocab_dic) + 1})
     return vocab_dic
@@ -36,7 +41,10 @@ def build_dataset(config, ues_word):
     if os.path.exists(config.vocab_path):
         vocab = pkl.load(open(config.vocab_path, 'rb'))
     else:
-        vocab = build_vocab(config.train_path, tokenizer=tokenizer, max_size=MAX_VOCAB_SIZE, min_freq=1)
+        vocab = build_vocab(config.train_path, 
+                            tokenizer=tokenizer, 
+                            max_size=MAX_VOCAB_SIZE, 
+                            min_freq=1)
         pkl.dump(vocab, open(config.vocab_path, 'wb'))
     print(f"Vocab size: {len(vocab)}")
 
@@ -128,11 +136,11 @@ def get_time_dif(start_time):
 if __name__ == "__main__":
     '''提取预训练词向量'''
     # 下面的目录、文件名按需更改。
-    train_dir = "./THUCNews/data/train.txt"
-    vocab_dir = "./THUCNews/data/vocab.pkl"
-    pretrain_dir = "./THUCNews/data/sgns.sogou.char"
+    train_dir = "./data/data/train.txt"
+    vocab_dir = "./data/data/vocab.pkl"
+    pretrain_dir = "./data/data/sgns.sogou.char"
     emb_dim = 300
-    filename_trimmed_dir = "./THUCNews/data/embedding_SougouNews"
+    filename_trimmed_dir = "./data/data/embedding_SougouNews"
     if os.path.exists(vocab_dir):
         word_to_id = pkl.load(open(vocab_dir, 'rb'))
     else:
