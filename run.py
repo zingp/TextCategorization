@@ -8,19 +8,27 @@ import argparse
 
 def parse():
     parser = argparse.ArgumentParser(description='Text Classification')
+    # 选择模型
     parser.add_argument('--model', 
                         type=str, 
                         required=True, 
                         help='choose a model: TextCNN, TextRNN, \
                         FastText, TextRCNN, TextRNN_Att, DPCNN, Transformer')
+    # embedding层使用预训练词向量还是重新训练，默认预训练
     parser.add_argument('--embedding', 
                         default='pre_trained', 
                         type=str, 
                         help='random or pre_trained')
+    # 词级别还是字级别 默认是字级别
     parser.add_argument('--word', 
                         default=False, 
                         type=bool, 
                         help='True for word, False for char')
+    # 网络参数初始化方法
+    parser.add_argument('--init_method', 
+                        default='xavier',
+                        type=str,
+                        help='xavier or kaiming')
     args = parser.parse_args()
     return args
 
@@ -63,8 +71,6 @@ if __name__ == '__main__':
     config.n_vocab = len(vocab)
     model = x.Model(config).to(config.device)
     if model_name != 'Transformer':
-        method = "kaiming"
-        # method = "xavier"
-        init_network(model, method=method)
+        init_network(model, method=args.init_method)
     print(model.parameters)
     train(config, model, train_iter, dev_iter, test_iter)
