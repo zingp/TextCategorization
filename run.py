@@ -39,7 +39,7 @@ if __name__ == '__main__':
     args = parse()
     # 搜狗新闻:embedding_SougouNews.npz, 腾讯:embedding_Tencent.npz, 随机初始化:random
     embedding = 'embedding_SougouNews.npz'
-    # embedding = 'embedding_Tencent.npz'
+    embedding = 'embedding_Weibo.npz'
     if args.embedding == 'random':
         embedding = 'random'
     model_name = args.model  # 'TextRCNN'  # TextCNN, TextRNN, FastText, TextRCNN, TextRNN_Att, DPCNN, Transformer
