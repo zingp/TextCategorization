@@ -27,10 +27,10 @@ class Config(object):
         self.require_improvement = 1000                                 # 若超过1000batch效果还没提升，则提前结束训练
         self.num_classes = len(self.class_list)                         # 类别数
         self.n_vocab = 0                                                # 词表大小，在运行时赋值
-        self.num_epochs = 10                                            # epoch数
+        self.num_epochs = 25                                            # epoch数
         self.batch_size = 128                                           # mini-batch大小
         self.pad_size = 32                                              # 每句话处理成的长度(短填长切)
-        self.learning_rate = 1e-3                                       # 学习率
+        self.learning_rate = 1e-4                                       # 学习率
         self.embed = self.embedding_pretrained.size(1)\
             if self.embedding_pretrained is not None else 300           # 字向量维度, 若使用了预训练词向量，则维度统一
         self.hidden_size = 128                                          # lstm隐藏层
