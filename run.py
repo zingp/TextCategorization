@@ -34,7 +34,8 @@ def parse():
 
 
 if __name__ == '__main__':
-    dataset = 'data'  # 数据集
+    #dataset = 'data'  # 数据集
+    dataset = 'comments_data'  # 数据集
     # 获取命令行参数
     args = parse()
     # 搜狗新闻:embedding_SougouNews.npz, 腾讯:embedding_Tencent.npz, 随机初始化:random
