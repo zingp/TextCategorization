@@ -62,3 +62,4 @@ class Model(nn.Module):
         out = self.maxpool(out).squeeze()
         out = self.fc(out)
         return out
+        
