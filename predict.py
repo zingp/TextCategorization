@@ -2,6 +2,7 @@ import os
 import time
 import torch
 import pickle as pkl
+import numpy as np
 from importlib import import_module
 
 '''
@@ -12,7 +13,6 @@ PAD = "<PAD>"
 UNK = '<UNK>'
 pad_size = 32     # 序列长度
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 
 def load_data(filename):
     """加载测试数据"""
@@ -73,13 +73,14 @@ if __name__ == "__main__":
     vocab_path = os.path.join(data_path, "vocab.pkl")          # 词汇表 
     
     log_dir = os.path.join(rootdir, "log")
+    srcdata_dir = os.path.join(data_path, "srcdata")
     trgdata_dir = os.path.join(data_path, "trgdata")
-    for d in [log_dir, trgdata_dir]:
+    for d in [log_dir, srcdata_dir, trgdata_dir]:
         if not os.path.exists(d):
             os.makedirs(d)
     yesterday = time.strftime("%Y%m%d", time.localtime(time.time()-86400))
-    srcfile = os.path.join(data_path, "srcfile.{}.txt".format(yesterday))
-    trgfile = os.path.join(data_path, "comments_label.{}.txt".format(yesterday))
+    srcfile = os.path.join(srcdata_dir, "srcdata.tsv.{}".format(yesterday))
+    trgfile = os.path.join(trgdata_dir, "trgdata.tsv.{}".format(yesterday))
 
     model_name = "TextCNN"
     vocab = load_vocab(vocab_path)
@@ -87,14 +88,22 @@ if __name__ == "__main__":
     model = create_model(model_name, vocab)
 
     with open(trgfile, "w") as f:
+        n = 0
+        start = time.time()
         for data in test_data:
             comment = data[-1].strip("\n").lower()
             x = build_bacth(vocab, comment, pad_size=pad_size)
             ypred = predic(model, x)
-            if type(ypred) is list:
+            if isinstance(ypred, np.ndarray):
                 yp = ypred[-1]
             else:
                 yp = ypred
             line = "\t".join([data[0], data[-1].strip("\n"), str(yp)])
             f.write(line)
             f.write("\n")
+            n += 1
+            if n % 1000 == 0:
+                end = time.time()
+                print("per 100 cost time {} s.".format(end-start))
+                print(n)
+                start = end
